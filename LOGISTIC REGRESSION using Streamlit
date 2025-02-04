@@ -1,0 +1,27 @@
+import streamlit as st
+import pickle
+
+# Save model
+with open("logistic_model.pkl", "wb") as file:
+    pickle.dump(log_reg, file)
+
+# Load model in Streamlit app
+model = pickle.load(open("logistic_model.pkl", "rb"))
+
+st.title("Titanic Survival Prediction")
+
+# User input
+pclass = st.selectbox("Pclass", [1, 2, 3])
+sex = st.selectbox("Sex", [0, 1])  # 0 = Female, 1 = Male
+age = st.number_input("Age", min_value=1, max_value=100)
+sibsp = st.number_input("SibSp", min_value=0, max_value=8)
+parch = st.number_input("Parch", min_value=0, max_value=6)
+fare = st.number_input("Fare", min_value=0.0, max_value=500.0)
+embarked = st.selectbox("Embarked", [0, 1, 2])  # Encoded values
+
+# Prediction
+if st.button("Predict"):
+    input_data = [[pclass, sex, age, sibsp, parch, fare, embarked]]
+    prediction = model.predict(input_data)
+    result = "Survived" if prediction[0] == 1 else "Did Not Survive"
+    st.write(f"Prediction: {result}")
